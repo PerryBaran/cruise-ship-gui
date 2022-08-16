@@ -11,7 +11,7 @@ describe('Port', () => {
         expect(port).toBeInstanceOf(Object);
     });
 
-    it('can be named', () => {
+    it('can take name value as argument', () => {
         expect(port.name).toEqual('Dover');
     });
 

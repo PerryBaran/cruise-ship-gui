@@ -27,11 +27,11 @@ describe('Ship', () => {
         expect(ship).toBeInstanceOf(Object);
     });
 
-    it('has previous port initiliased as null', () => {
+    it('has previousPort instantiated as null', () => {
         expect(ship.previousPort).toEqual(null);
     });
 
-    it('has current port initialised as port1', () => {
+    it('has currentPort instantiated as first port passed to the itinerary', () => {
         expect(ship.currentPort).toEqual(port1);
     });
     
@@ -42,12 +42,12 @@ describe('Ship', () => {
         expect(port1.removeShip).toHaveBeenCalledWith(ship);
     });
 
-    it('setting sail sets the previousPort to the currentPort', () => {
+    it('sets previousPort to currentPort when setSail', () => {
         ship.setSail();
         expect(ship.previousPort).toEqual(port1);
     });
 
-    it('can dock at different ports', () => {
+    it('can dock at the next port (in order of itinerary array)', () => {
         ship.setSail();
         ship.dock();
 

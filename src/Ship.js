@@ -3,7 +3,7 @@ class Ship{
         this.previousPort = null;
         this.currentPort = itinerary.ports[0];
         this.itinerary = itinerary;
-        this.currentPort.addShip(this)
+        this.currentPort.addShip(this);
     };
 
     setSail() {
@@ -14,7 +14,7 @@ class Ship{
 
         this.previousPort = this.currentPort;
         this.currentPort = null;
-        this.previousPort.removeShip(this)
+        this.previousPort.removeShip(this);
     };
 
     dock() {
@@ -22,8 +22,8 @@ class Ship{
         const nextPortIndex = ports.indexOf(this.previousPort) + 1;
 
         this.currentPort = ports[nextPortIndex];
-        this.currentPort.addShip(this)
+        this.currentPort.addShip(this);
     };
 };
 
-module.exports = Ship
+module.exports = Ship;
