@@ -1,50 +1,72 @@
-const { Ship } = require('../Ship');
-const { Port } = require('../Port');
-
-describe('Port', () => {
-    it('can be instantiated', () => {
-        const port = new Port();
-        expect(port).toBeInstanceOf(Object)
-    });
-
-    it('can be named', () => {
-        const port = new Port('Dover');
-        expect(port.name).toEqual('Dover');
-    });
-});
+const Ship = require('../Ship');
+const Port  = require('../Port');
+const Itinerary = require('../Itinerary');
 
 describe('Ship', () => {
     it('can be instantiated', () => {
-       const ship = new Ship();
+        const port1 = new Port('Dover');
+        const itinerary = new Itinerary([port1]);
+        const ship = new Ship(itinerary);
        expect(ship).toBeInstanceOf(Object) 
     });
 
-    describe('Dock', () => {
-        it('starting point is an object', () => {
-            const port = new Port()
-            const ship = new Ship(port);
-            expect(ship.currentPort).toBeInstanceOf(Object);
-        });
+    it('has previous port initiliased as null', () => {
+        const port1 = new Port('Dover');
+        const itinerary = new Itinerary([port1]);
+        const ship = new Ship(itinerary);
+        expect(ship.previousPort).toEqual(null);
+    });
 
-        it('starting point has a name', () => {
-            const port = new Port('Dover');
-            const ship = new Ship(port);
-            expect(ship.currentPort.name).toEqual('Dover');
-        });
+    it('has current port initialised as port1', () => {
+        const port1 = new Port('Dover');
+        const itinerary = new Itinerary([port1]);
+        const ship = new Ship(itinerary);
+        expect(ship.currentPort).toEqual(port1);
+    });
+    
+    it('can set sail', () => {
+        const port1 = new Port('Dover');
+        const port2 = new Port ('Calais');    
+        const itinerary = new Itinerary([port1, port2]);
+        const ship = new Ship(itinerary);
 
-        it('can set sail', () => {
-            const port = new Port('Dover');
-            const ship = new Ship(port);
-            ship.setSail();
-            expect(ship.currentPort).toBeFalsy();
-        });
+        ship.setSail();
 
-        it('can dock at a new port', () => {
-            const port = new Port('Dover');
-            const ship = new Ship(port);
-            const calais = new Port('Calais')
-            ship.dock(calais);
-            expect(ship.currentPort.name).toEqual('Calais')  
-        });
+        expect(ship.currentPort).toBeFalsy();
+    });
+
+    it('can set sail, setting the previousPort to the currentPort', () => {
+        const port1 = new Port('Dover');
+        const port2 = new Port ('Calais');    
+        const itinerary = new Itinerary([port1, port2]);
+        const ship = new Ship(itinerary);
+
+        ship.setSail();
+
+        expect(ship.previousPort).toEqual(port1);
+    });
+
+    it('can dock at a new port', () => {
+        const port1 = new Port('Dover');
+        const port2 = new Port ('Calais');    
+        const itinerary = new Itinerary([port1, port2]);
+        const ship = new Ship(itinerary);
+
+        ship.setSail();
+        ship.dock();
+
+        expect(ship.currentPort).toEqual(port2)  
+    });
+
+    it('cannot sail further than its itinerary', () => {
+        const port1 = new Port('Dover');
+        const port2 = new Port ('Calais');    
+        const itinerary = new Itinerary([port1, port2]);
+        const ship = new Ship(itinerary);
+
+        ship.setSail();
+        ship.dock();
+
+        expect(() => ship.setSail()).toThrowError('End of itinerary reached');
     });
 });
