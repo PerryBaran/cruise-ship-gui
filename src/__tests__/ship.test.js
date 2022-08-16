@@ -1,6 +1,4 @@
 const Ship = require('../Ship');
-const Port  = require('../Port');
-const Itinerary = require('../Itinerary');
 
 describe('Ship', () => {
     let ship;
@@ -9,9 +7,19 @@ describe('Ship', () => {
     let itinerary;
 
     beforeEach(() => {
-        port1 = new Port('Dover');
-        port2 = new Port ('Calais');    
-        itinerary = new Itinerary([port1, port2]);
+        port1 = {
+            name: 'Dover',
+            ships: [],
+            addShip: jest.fn(),
+            removeShip: jest.fn(),
+        }
+        port2 = {
+            name: 'Calais',
+            ships: [],
+            addShip: jest.fn(),
+            removeShip: jest.fn(),
+        }  
+        itinerary = {ports: [port1, port2]};
         ship = new Ship(itinerary);
     });
 
@@ -28,12 +36,10 @@ describe('Ship', () => {
     });
     
     it('can set sail', () => {
-        expect(port1.ships).toContain(ship);
-
         ship.setSail();
 
         expect(ship.currentPort).toBeFalsy();
-        expect(port1.ships).not.toContain(ship);
+        expect(port1.removeShip).toHaveBeenCalledWith(ship);
     });
 
     it('setting sail sets the previousPort to the currentPort', () => {
@@ -46,7 +52,7 @@ describe('Ship', () => {
         ship.dock();
 
         expect(ship.currentPort).toEqual(port2);
-        expect(port2.ships).toContain(ship);
+        expect(port2.addShip).toHaveBeenCalledWith(ship);
     });
 
     it('cannot sail further than its itinerary', () => {
@@ -57,6 +63,6 @@ describe('Ship', () => {
     });
 
     it('gets added to port on instantiation', () => {
-        expect(port1.ships).toContain(ship);
+        expect(port1.addShip).toHaveBeenCalledWith(ship);
     });
 });
