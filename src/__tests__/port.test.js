@@ -21,7 +21,8 @@ describe('Port', () => {
     });
 
     describe('add and remove ships', () => {
-        let ship = {}
+        let ship = jest.fn()
+        
         it('can addShip', () => {
             port.addShip(ship);
             expect(port.ships).toContain(ship);

@@ -14,7 +14,7 @@ describe('Ship', () => {
         itinerary = new Itinerary([port1, port2]);
         ship = new Ship(itinerary);
     });
-    
+
     it('can be instantiated', () => {
         expect(ship).toBeInstanceOf(Object);
     });
