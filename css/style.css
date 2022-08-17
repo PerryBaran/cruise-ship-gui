@@ -41,3 +41,12 @@ body {
 
     background-image: url(../images/port.png);
 }
+
+.ship {
+    position: absolute;
+
+    width: 128px;
+    height: 64px;
+
+    background-image: url(../images/ship.png);
+}

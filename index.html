@@ -19,13 +19,17 @@
     <script src="src/Ship.js"></script>        
     <script>
         const controller = new Controller();
+
         const itinerary = new Itinerary([
             new Port('Dover'), 
             new Port('Calais'),
             new Port('San Juan'),
             new Port('Amber Cove')
         ]);
+        const ship = new Ship(itinerary)
+
         controller.renderPorts(itinerary.ports);
+        controller.renderShip(ship)
     </script>
 </body>
 </html>
