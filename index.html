@@ -11,13 +11,21 @@
 </head>
 <body>
     <div id="viewport">
-        <script src="src/Controller.js"></script>
-        <script>
-            initialiseSea();
-        </script>
-        <script src="src/Port.js"></script>
-        <script src="src/Itinerary.js"></script>
-        <script src="src/Ship.js"></script>
-    </div>
+        <div id="ports"></div>
+    </div>        
+    <script src="src/Controller.js"></script>
+    <script src="src/Port.js"></script>
+    <script src="src/Itinerary.js"></script>
+    <script src="src/Ship.js"></script>        
+    <script>
+        const controller = new Controller();
+        const itinerary = new Itinerary([
+            new Port('Dover'), 
+            new Port('Calais'),
+            new Port('San Juan'),
+            new Port('Amber Cove')
+        ]);
+        controller.renderPorts(itinerary.ports);
+    </script>
 </body>
 </html>
