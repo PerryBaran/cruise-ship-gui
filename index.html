@@ -8,16 +8,18 @@
     <title>Cruise Ships</title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="images/water0.png">
 </head>
 <body>
+    <h1>Cruise Ship</h1>
     <div>
         <form id="addPort">
             <h2>Add Port</h2>
-            <input placeholder="Name" minLength="1" maxlength="17" required/>
+            <input name="name" placeholder="Name" minLength="1" maxlength="17" required/>
             <input type="submit" value="Add">
         </form>
         <div id="portInfo">
-            <p>Current Port: <span id="currentPort"></span></p>
+            <p><span id="currentPrevious">Current</span> Port: <span id="currentPort"></span></p>
             <p>Next Port: <span id="nextPort"></span></p>
         </div>
         <div id="viewport">
@@ -35,16 +37,13 @@
         const ship = new Ship(itinerary);
         const controller = new Controller(ship);
 
-        const form = document.getElementById('addPort');
-        form.onsubmit = e => {
+        document.getElementById('addPort').onsubmit = e => {
             e.preventDefault();
-            const name = form.childNodes[3]
-            const port = new Port(name.value);
-            ship.addPort(port);
-            name.value = '';
-            controller.renderPorts(ship)
+            const name = new FormData(e.target).get('name');
+            const port = new Port(name);
+            e.target.reset();
+            controller.addPort(port);
         };
-    
     </script>
 </body>
 </html>

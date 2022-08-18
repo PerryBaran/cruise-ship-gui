@@ -1,18 +1,22 @@
-const OFFSET_OFFSET = 32;
+const SHIP_OFFSET = 32;
+const MESSAGE_TIMEOUT  = 2000;
+const SHIP_INTERVAL = 40;
+const ARRIVING_MESSAGE_TIME = MESSAGE_TIMEOUT/SHIP_INTERVAL;
 
-function reset(parent){
+function resetContainer(parent){
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
-    }
-}
+    };
+};
 
 (function exportController() {
     class Controller{
         constructor(ship){
             this.ship = ship
             this.initialiseSea();
-            this.headsUp();
-            this.renderShip();
+            this.initialiseShipPosition();
+            this.updateHeadsUpDisplay();
+
             document.getElementById('sailButton').onclick = () => {
                 this.setSail();
             };
@@ -29,15 +33,14 @@ function reset(parent){
         
             setInterval(() => {
                 viewport.style.backgroundImage = `url(${backgrounds[index % backgrounds.length]})`;
-                index += 1;
+                index++;
             }, 1000);
         };
 
-        renderPorts(ship) {
-            this.ship = ship;
-            const ports = ship.itinerary.ports;
+        renderPorts(ports) {
             const portsContainer = document.getElementById('ports');
-            reset(portsContainer);
+            resetContainer(portsContainer);
+
             let portsWidth = 0;
 
             ports.forEach((port, i) => {
@@ -51,91 +54,109 @@ function reset(parent){
                 portsContainer.appendChild(portElement);
             });
 
-            portsContainer.style.width = `${portsWidth}px`;    
-            this.headsUp();
-            this.renderShip();
+            portsContainer.style.width = `${portsWidth}px`;
         };
 
-        renderShip() {
+        initialiseShipPosition() {
             const currentPort = this.ship.currentPort;
             if (!currentPort) return;
+
             const shipElement = document.getElementById('ship');
 
             const portIndex = this.ship.itinerary.ports.indexOf(currentPort);
             const portElement = document.querySelector(`[data-port-index="${portIndex}"]`);
             
-            shipElement.style.left = `${portElement.offsetLeft - OFFSET_OFFSET}px`;
-            shipElement.style.top = `${portElement.offsetTop + OFFSET_OFFSET}px`;
+            shipElement.style.left = `${portElement.offsetLeft - SHIP_OFFSET}px`;
+            shipElement.style.top = `${portElement.offsetTop + SHIP_OFFSET}px`;
         };
 
         setSail() {
-            const portIndex = this.ship.itinerary.ports.indexOf(this.ship.currentPort) + 1;
+            const ports = this.ship.itinerary.ports
+            const portIndex = ports.indexOf(this.ship.currentPort) + 1;
             const portElement = document.querySelector(`[data-port-index="${portIndex}"]`);
 
             if (!portElement) return this.renderMessage('End of the line!');
 
-            const button = document.getElementById('sailButton');
-            button.disabled = true;
+            const sailButton = document.getElementById('sailButton');
+            sailButton.disabled = true;
 
             const shipElement = document.getElementById('ship');
 
-            const portLeft = portElement.offsetLeft - OFFSET_OFFSET;
+            const portLeft = portElement.offsetLeft - SHIP_OFFSET;
             let shipLeft = shipElement.offsetLeft;
-            
+
             this.ship.setSail();
+            this.updateHeadsUpDisplay();
             this.renderMessage(`Now departing ${this.ship.previousPort.name}`);
 
             const sail = setInterval(() => {
                 shipLeft++;
                 shipElement.style.left = `${shipLeft}px`;
 
-                if (portLeft - shipLeft === 100) {
-                    this.ship.dock();
-                    this.renderMessage(`Now arriving at ${this.ship.currentPort.name}`);
-                }
+                if (portLeft - shipLeft === ARRIVING_MESSAGE_TIME) {
+                    const nextPort = ports[portIndex]
+                    this.renderMessage(`Now arriving at ${nextPort.name}`);
+                };
                 if (shipLeft === portLeft) {
                     clearInterval(sail);
-                    this.headsUp();
-                    button.disabled = false; 
-                }
-            }, 20);
-
+                    this.ship.dock();
+                    this.updateHeadsUpDisplay();
+                    sailButton.disabled = false; 
+                };
+            }, SHIP_INTERVAL);
         };
 
         renderMessage(message) {
             const button = document.getElementById('sailButton');
-            button.className = 'message';
             button.innerHTML = message;
+
             setTimeout(() => {
                 if (this.ship.currentPort) {
-                    button.className = 'sailButton';
                     button.innerHTML = 'Set Sail!';
                 } else {
                     button.innerHTML = 'Sailing...';
-                }
-            }, 2000);
+                };
+            }, MESSAGE_TIMEOUT);
         };
 
-        headsUp() {
-            const currentPort = this.ship.currentPort
-            const ports = this.ship.itinerary.ports
+        updateHeadsUpDisplay() {
+            const currentPort = this.ship.currentPort;
+            const ports = this.ship.itinerary.ports;
 
             const currentPortElement = document.getElementById('currentPort');
             const nextPortElement = document.getElementById('nextPort');
 
-            if (currentPort) {
-                currentPortElement.innerHTML = `${currentPort.name}`;
-                const nextPortIndex = ports.indexOf(currentPort) + 1;
-                
-                if (nextPortIndex === ports.length) {
-                    nextPortElement.innerHTML = 'None';
-                } else {
-                    nextPortElement.innerHTML = `${ports[nextPortIndex].name}`
-                }                
-            } else {
+            if (!ports.length) {
                 currentPortElement.innerHTML = 'None';
-                nextPortElement.innerHTML = 'None';
-            }
+                nextPortElement.innerHTML = 'None';                
+            } else {
+                const currentPreviousElement = document.getElementById('currentPrevious');
+                let nextPortIndex;
+
+                if (!currentPort) {
+                    const previousPort = this.ship.previousPort;
+                    currentPreviousElement.innerHTML = 'Previous';
+                    currentPortElement.innerHTML = previousPort.name;
+                    nextPortIndex = ports.indexOf(previousPort) + 1;
+                } else {
+                    currentPreviousElement.innerHTML = 'Current';
+                    currentPortElement.innerHTML = currentPort.name;
+                    nextPortIndex = ports.indexOf(currentPort) + 1;
+                };
+
+                if (nextPortIndex === ports.length) {
+                   nextPortElement.innerHTML = 'None';
+                } else {
+                    nextPortElement.innerHTML = ports[nextPortIndex].name;
+                };
+            };
+        };
+
+        addPort(port){
+            this.ship.addPort(port);
+            this.updateHeadsUpDisplay();
+            this.renderPorts(this.ship.itinerary.ports);
+            this.initialiseShipPosition();
         };
     };
 
