@@ -75,7 +75,14 @@ body {
     background-color: white;
 }
 
-.sailing {
+#portInfo {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+
     color: white;
-    background-color: green;
+}
+
+#portInfo > p {
+    text-align: right;
 }
