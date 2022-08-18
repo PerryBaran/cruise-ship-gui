@@ -6,6 +6,10 @@
     font-family: 'Press Start 2P', cursive;
 }
 
+button {
+    all: unset;
+}
+
 html, body {
     height: 100%;
 }
@@ -52,16 +56,26 @@ body {
     background-image: url(../images/ship.png);
 }
 
-#sailButton {
-    all: unset;
-    
+#sailButton { 
     width: 100%;
     height: 30px;
     
+    text-align: center;
+}
+
+.sailButton {
     color: white;
     background-color: red;
 
-    text-align: center;
-
     cursor: pointer;
+}
+
+.message {
+    color: black;
+    background-color: white;
+}
+
+.sailing {
+    color: white;
+    background-color: green;
 }

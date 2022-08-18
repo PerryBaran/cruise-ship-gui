@@ -57,9 +57,10 @@ const OFFSET_OFFSET = 32;
             const portIndex = this.ship.itinerary.ports.indexOf(this.ship.currentPort) + 1;
             const portElement = document.querySelector(`[data-port-index="${portIndex}"]`);
 
-            if (!portElement) {
-                return alert('End of the line!');
-            };
+            if (!portElement) return this.renderMessage('End of the line!');
+
+            const button = document.getElementById('sailButton');
+            button.disabled = true;
 
             const shipElement = document.getElementById('ship');
 
@@ -67,17 +68,38 @@ const OFFSET_OFFSET = 32;
             let shipLeft = shipElement.offsetLeft;
             
             this.ship.setSail();
+            this.renderMessage(`Now departing ${this.ship.previousPort.name}`);
 
             const sail = setInterval(() => {
                 shipLeft++;
-                shipElement.style.left = `${shipLeft}px`
-                if (shipLeft === portLeft) {
-                    clearInterval(sail)
-                }
-            }, 10);
+                shipElement.style.left = `${shipLeft}px`;
 
-            this.ship.dock();
+                if (portLeft - shipLeft === 100) {
+                    this.ship.dock();
+                    this.renderMessage(`Now arriving at ${this.ship.currentPort.name}`);
+                }
+                if (shipLeft === portLeft) {
+                    clearInterval(sail);
+                    button.disabled = false; 
+                }
+            }, 20);
+
         };
+
+        renderMessage(message) {
+            const button = document.getElementById('sailButton');
+            button.className = 'message';
+            button.innerHTML = message;
+            setTimeout(() => {
+                if (this.ship.currentPort) {
+                    button.className = 'sailButton';
+                    button.innerHTML = 'Set Sail!';
+                } else {
+                    button.className = 'sailing'
+                    button.innerHTML = 'Sailing!';
+                }
+            }, 2000);
+        }
     };
 
     if (typeof module !== 'undefined' && module.exports) {
