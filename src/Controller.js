@@ -1,7 +1,13 @@
+const OFFSET_OFFSET = 32;
+
 (function exportController() {
     class Controller{
-        constructor(){
+        constructor(ship){
+            this.ship = ship
             this.initialiseSea();
+            document.getElementById('sailButton').onclick = () => {
+                this.setSail();
+            };
         };
 
         initialiseSea() {
@@ -37,18 +43,40 @@
             portsContainer.style.width = `${portsWidth}px`;
         };
 
-        renderShip(ship) {
-            const viewport = document.getElementById('viewport');
-            const shipElement = document.createElement('div');
-            shipElement.className='ship';
+        renderShip() {
+            const shipElement = document.getElementById('ship');
 
-            const portIndex = ship.itinerary.ports.indexOf(ship.currentPort);
+            const portIndex = this.ship.itinerary.ports.indexOf(this.ship.currentPort);
             const portElement = document.querySelector(`[data-port-index="${portIndex}"]`);
             
-            shipElement.style.left = `${portElement.offsetLeft - 32}px`;
-            shipElement.style.top = `${portElement.offsetTop + 32}px`;
+            shipElement.style.left = `${portElement.offsetLeft - OFFSET_OFFSET}px`;
+            shipElement.style.top = `${portElement.offsetTop + OFFSET_OFFSET}px`;
+        };
 
-            viewport.appendChild(shipElement);
+        setSail() {
+            const portIndex = this.ship.itinerary.ports.indexOf(this.ship.currentPort) + 1;
+            const portElement = document.querySelector(`[data-port-index="${portIndex}"]`);
+
+            if (!portElement) {
+                return alert('End of the line!');
+            };
+
+            const shipElement = document.getElementById('ship');
+
+            const portLeft = portElement.offsetLeft - OFFSET_OFFSET;
+            let shipLeft = shipElement.offsetLeft;
+            
+            this.ship.setSail();
+
+            const sail = setInterval(() => {
+                shipLeft++;
+                shipElement.style.left = `${shipLeft}px`
+                if (shipLeft === portLeft) {
+                    clearInterval(sail)
+                }
+            }, 10);
+
+            this.ship.dock();
         };
     };
 
