@@ -65,4 +65,11 @@ describe('Ship', () => {
     it('gets added to port on instantiation', () => {
         expect(port1.addShip).toHaveBeenCalledWith(ship);
     });
+
+    it('can add ports to ships itinerary', () => {
+        const port3 = {name: 'San Juan'}
+        ship.addPort(port3)
+        const ports = ship.itinerary.ports
+        expect(ports[ports.length - 1]).toEqual(port3)
+    })
 });

@@ -11,6 +11,11 @@
 </head>
 <body>
     <div>
+        <form id="addPort">
+            <h2>Add Port</h2>
+            <input placeholder="Name" minLength="1" maxlength="17" required/>
+            <input type="submit" value="Add">
+        </form>
         <div id="portInfo">
             <p>Current Port: <span id="currentPort"></span></p>
             <p>Next Port: <span id="nextPort"></span></p>
@@ -26,18 +31,20 @@
     <script src="src/Itinerary.js"></script>
     <script src="src/Ship.js"></script>        
     <script>
-        const itinerary = new Itinerary([
-            new Port('Dover'), 
-            new Port('Calais'),
-            new Port('San Juan'),
-            new Port('Amber Cove')
-        ]);
-        const ship = new Ship(itinerary)
+        const itinerary = new Itinerary([]);
+        const ship = new Ship(itinerary);
         const controller = new Controller(ship);
 
-        controller.renderPorts(itinerary.ports);
-        controller.renderShip();
-
+        const form = document.getElementById('addPort');
+        form.onsubmit = e => {
+            e.preventDefault();
+            const name = form.childNodes[3]
+            const port = new Port(name.value);
+            ship.addPort(port);
+            name.value = '';
+            controller.renderPorts(ship)
+        };
+    
     </script>
 </body>
 </html>

@@ -1,11 +1,18 @@
 const OFFSET_OFFSET = 32;
 
+function reset(parent){
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
 (function exportController() {
     class Controller{
         constructor(ship){
             this.ship = ship
             this.initialiseSea();
             this.headsUp();
+            this.renderShip();
             document.getElementById('sailButton').onclick = () => {
                 this.setSail();
             };
@@ -26,8 +33,11 @@ const OFFSET_OFFSET = 32;
             }, 1000);
         };
 
-        renderPorts(ports) {
+        renderPorts(ship) {
+            this.ship = ship;
+            const ports = ship.itinerary.ports;
             const portsContainer = document.getElementById('ports');
+            reset(portsContainer);
             let portsWidth = 0;
 
             ports.forEach((port, i) => {
@@ -41,14 +51,17 @@ const OFFSET_OFFSET = 32;
                 portsContainer.appendChild(portElement);
             });
 
-            portsContainer.style.width = `${portsWidth}px`;
-            
+            portsContainer.style.width = `${portsWidth}px`;    
+            this.headsUp();
+            this.renderShip();
         };
 
         renderShip() {
+            const currentPort = this.ship.currentPort;
+            if (!currentPort) return;
             const shipElement = document.getElementById('ship');
 
-            const portIndex = this.ship.itinerary.ports.indexOf(this.ship.currentPort);
+            const portIndex = this.ship.itinerary.ports.indexOf(currentPort);
             const portElement = document.querySelector(`[data-port-index="${portIndex}"]`);
             
             shipElement.style.left = `${portElement.offsetLeft - OFFSET_OFFSET}px`;
@@ -108,15 +121,20 @@ const OFFSET_OFFSET = 32;
             const ports = this.ship.itinerary.ports
 
             const currentPortElement = document.getElementById('currentPort');
-            currentPortElement.innerHTML = `${currentPort.name}`;
-
             const nextPortElement = document.getElementById('nextPort');
-            const nextPortIndex = ports.indexOf(currentPort) + 1;
-            
-            if (nextPortIndex === ports.length) {
-                nextPortElement.innerHTML = 'None';
+
+            if (currentPort) {
+                currentPortElement.innerHTML = `${currentPort.name}`;
+                const nextPortIndex = ports.indexOf(currentPort) + 1;
+                
+                if (nextPortIndex === ports.length) {
+                    nextPortElement.innerHTML = 'None';
+                } else {
+                    nextPortElement.innerHTML = `${ports[nextPortIndex].name}`
+                }                
             } else {
-                nextPortElement.innerHTML = `${ports[nextPortIndex].name}`
+                currentPortElement.innerHTML = 'None';
+                nextPortElement.innerHTML = 'None';
             }
         };
     };

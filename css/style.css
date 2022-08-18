@@ -86,3 +86,42 @@ body {
 #portInfo > p {
     text-align: right;
 }
+
+#addPort {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+
+    width: 250px;
+    padding: 10px;
+
+    color: black;
+    background-color: white;
+
+    border: 3px double black;
+}
+
+#addPort > h2 {
+    font-size: 1rem;
+}
+
+#addPort > input {
+    width: 100%;
+    margin-top: 5px;
+
+    font-size: 0.8rem;
+}
+
+#addPort > input[type='submit'] {
+    all: unset;
+
+    padding: 5px;
+    margin-top: 5px;
+
+    color: white;
+    background-color: red;
+    
+    font-size: 0.8rem;
+
+    cursor: pointer;
+}
