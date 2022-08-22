@@ -20,6 +20,10 @@ function resetContainer(parent){
             document.getElementById('sailButton').onclick = () => {
                 this.setSail();
             };
+
+            document.getElementById('addPort').onsubmit = e => {
+                this.addPort(e);
+            };
         };
 
         initialiseSea() {
@@ -94,12 +98,11 @@ function resetContainer(parent){
                 shipElement.style.left = `${shipLeft}px`;
 
                 if (portLeft - shipLeft === ARRIVING_MESSAGE_TIME) {
-                    const nextPort = ports[portIndex]
-                    this.renderMessage(`Now arriving at ${nextPort.name}`);
+                    this.ship.dock();
+                    this.renderMessage(`Now arriving at ${this.ship.currentPort.name}`);
                 };
                 if (shipLeft === portLeft) {
                     clearInterval(sail);
-                    this.ship.dock();
                     this.updateHeadsUpDisplay();
                     sailButton.disabled = false; 
                 };
@@ -152,11 +155,19 @@ function resetContainer(parent){
             };
         };
 
-        addPort(port){
+        addPort(e){
+            e.preventDefault();
+
+            const name = document.querySelector('[name="name"]').value;
+            //Port is on window
+            const port = new Port(name);
+
             this.ship.addPort(port);
             this.updateHeadsUpDisplay();
             this.renderPorts(this.ship.itinerary.ports);
             this.initialiseShipPosition();
+
+            e.target.reset();
         };
     };
 

@@ -36,14 +36,6 @@
         const itinerary = new Itinerary([]);
         const ship = new Ship(itinerary);
         const controller = new Controller(ship);
-
-        document.getElementById('addPort').onsubmit = e => {
-            e.preventDefault();
-            const name = new FormData(e.target).get('name');
-            const port = new Port(name);
-            e.target.reset();
-            controller.addPort(port);
-        };
     </script>
 </body>
 </html>
